@@ -5,4 +5,7 @@ If you want to help me develop this, please leave your contribution, whether it'
 
 However, for obvious reasons, __do not use this algorithm in production environments!!__ This algorithm is a non-professional hobby/project.
 
---> *eventually I will improve the algorithm over time, but I will also have stopping periods*
+Important:
+
+* Iam making a diagram to show the algorithm
+* eventually I will improve the algorithm over time, but I will also have stopping periods
