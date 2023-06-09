@@ -49,9 +49,3 @@ def gethash(entry):
     h4 = bitops.operatechuncks(h3list)
 
     return hex(h4)[2:]
-
-a = gethash('Omega0')
-try:
-    print(f"{a}\ncontem:\n{a.bit_length()}")
-except:
-    print(a)
