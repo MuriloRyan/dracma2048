@@ -1,5 +1,3 @@
-import random
-
 constK = [
     "428a2f98d728ae22", "7137449123ef65cd", "b5c0fbcfec4d3b2f", "e9b5dba58189dbbc",
     "3956c25bf348b538", "59f111f1b605d019", "923f82a4af194f9b", "ab1c5ed5da6d8118",
@@ -37,17 +35,50 @@ def adjust(message, length=2048):
 def shuffle(binary_sequence, k, lent=None):
     if not lent:
         lent = binary_sequence.bit_length()
-    if lent:
-        lent = lent
 
-    binary_list = list(bin(adjust(binary_sequence,length=lent))[2:])
+    binary_list = list(bin(adjust(binary_sequence, length=lent))[2:])
     n = len(binary_list)
 
-    random.seed(k)
     for i in range(n - 1, 0, -1):
-        j = random.randint(0, i)
+        j = k % (i + 1)
         binary_list[i], binary_list[j] = binary_list[j], binary_list[i]
 
-    random.seed()
     shuffled_sequence = ''.join(binary_list)
     return int(shuffled_sequence, 2)
+
+
+def getchuncks(binary):
+    binary = bin(binary)[2:] if isinstance(binary,int) else str(binary)
+    chuncks = []
+
+    for i in range(0, 2048, 256):
+        block = binary[i:i+256]
+        chuncks.append(block)
+
+    chuncks = [int(n) for n in chuncks]
+
+    return chuncks
+
+def operatechuncks(chuncks):
+    
+    BigsideA = chuncks[0:4]
+    BigsideB = chuncks[4:8]
+
+    sda = int(''.join(str(i) for i in BigsideB[len(BigsideB)//2:]))
+    sdb = int(''.join(str(i) for i in BigsideB[len(BigsideB)//2:]))
+    sdx = bin(int(''.join([str(sda^sdb),str(sdb)])))[2:]
+
+    BigsideA = int(''.join(str(i) for i in BigsideA))^int(''.join(str(i) for i in BigsideB))
+
+    hashToOp = ''.join([str(BigsideA),sdx])
+    hashToOp = getchuncks(hashToOp)
+
+    p0 = (hashToOp[4] ^ hashToOp[5]) ^ hashToOp[7]
+    p1 = (p0 ^ (hashToOp[0]^hashToOp[1]) ) ^ hashToOp[6]
+
+    returnhash = [  p0^p1,hashToOp[1],hashToOp[2],hashToOp[3],
+            hashToOp[4],hashToOp[5],hashToOp[6],hashToOp[7]]
+    
+    returnhash = adjust(''.join([str(i) for i in returnhash]),length=2048)
+
+    return returnhash
